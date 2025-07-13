@@ -12,7 +12,7 @@ export const initTables = async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS user_roles (
       id SERIAL PRIMARY KEY,
-      user_id UUID NOT NULL,
+      user_id VARCHAR(50) NOT NULL,
       role_id INTEGER REFERENCES roles(id)
     );
   `);
