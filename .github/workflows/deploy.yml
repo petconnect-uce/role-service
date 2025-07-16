@@ -1,0 +1,54 @@
+name: Test and Deploy Role Service to Docker Hub
+
+on:
+  push:
+    branches:
+      - prod
+
+env:
+  IMAGE_NAME: role-service
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Simulated Test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Simulated test
+        run: echo "No tests yet" && exit 0
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    name: Build & Push Docker Image
+    environment:
+      name: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest .
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
